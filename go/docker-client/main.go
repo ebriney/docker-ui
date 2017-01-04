@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 
@@ -11,34 +12,66 @@ import (
 
 var (
 	host string
+	ps   bool
+	info bool
 )
 
 func init() {
 	flag.StringVar(&host, "host", client.DefaultDockerHost, "host to reach")
+	flag.BoolVar(&ps, "ps", false, "list containers (ps -a)")
+	flag.BoolVar(&info, "info", false, "docker info")
 }
 
 func main() {
 	flag.Parse()
-	ctx := context.Background()
 
 	cli, err := client.NewClient(host, "", nil, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	df, err := cli.DiskUsage(ctx)
-	if err != nil {
-		fmt.Printf("Cannot get disk usage\n")
-	} else {
-		fmt.Printf("Disk usage: %d\n", df.LayersSize)
+	if ps {
+		listContainers(cli)
+		return
 	}
 
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{All: true})
+	if info {
+		displayInfo(cli)
+		return
+	}
+
+	usage()
+}
+
+func dump(i interface{}) {
+	jsonData, err := json.Marshal(i)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Print(string(jsonData))
+}
+
+func listContainers(cli *client.Client) {
+	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{All: true})
 	if err != nil {
 		panic(err)
 	}
 
-	for _, container := range containers {
-		fmt.Printf("%s %s\n", container.ID[:10], container.Image)
+	fmt.Print("{\"containers\":")
+	dump(containers)
+	fmt.Println("}")
+}
+
+func displayInfo(cli *client.Client) {
+	info, err := cli.Info(context.Background())
+	if err != nil {
+		panic(err)
 	}
+
+	dump(info)
+	fmt.Println("")
+}
+
+func usage() {
+	fmt.Println("usage: docker-client [-host path] [-ps] [-info]")
 }
