@@ -1,15 +1,17 @@
-function callNativeApp () {
+function getDockerInfo() {
     try {
-        webkit.messageHandlers.callbackHandler.postMessage("Send from JavaScript");
+        webkit.messageHandlers.info.postMessage("");
     } catch(err) {
         console.log('error');
     }
 }
 
-setTimeout(function () {
-           callNativeApp();
-           }, 5000);
-
 function redHeader() {
-    document.querySelector('h1').style.color = "red";
+    document.querySelector('h1').innerHTML = "Docker is not running";
 }
+
+function dockerInfoChanged(dockerInfo) {
+    document.querySelector('h1').innerHTML = "version: " + dockerInfo.ServerVersion;
+}
+
+getDockerInfo();
