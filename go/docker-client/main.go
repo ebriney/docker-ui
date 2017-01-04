@@ -70,7 +70,11 @@ func listContainers(cli *client.Client) {
 
 	fmt.Print("{ \"containers\": ")
 	dump(containers)
-	fmt.Println("}")
+	if compact {
+		fmt.Print("}")
+	} else {
+		fmt.Println("}")
+	}
 }
 
 func displayInfo(cli *client.Client) {
@@ -80,7 +84,9 @@ func displayInfo(cli *client.Client) {
 	}
 
 	dump(info)
-	fmt.Println("")
+	if !compact {
+		fmt.Println("")
+	}
 }
 
 func usage() {
