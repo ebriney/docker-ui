@@ -11,13 +11,15 @@ import (
 )
 
 var (
-	host string
-	ps   bool
-	info bool
+	host    string
+	compact bool
+	ps      bool
+	info    bool
 )
 
 func init() {
 	flag.StringVar(&host, "host", client.DefaultDockerHost, "host to reach")
+	flag.BoolVar(&compact, "compact", false, "dump compact json")
 	flag.BoolVar(&ps, "ps", false, "list containers (ps -a)")
 	flag.BoolVar(&info, "info", false, "docker info")
 }
@@ -44,10 +46,19 @@ func main() {
 }
 
 func dump(i interface{}) {
-	jsonData, err := json.Marshal(i)
+	var jsonData []byte
+	var err error
+
+	if compact {
+		jsonData, err = json.Marshal(i)
+	} else {
+		jsonData, err = json.MarshalIndent(i, "", "    ")
+	}
+
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Print(string(jsonData))
 }
 
@@ -57,7 +68,7 @@ func listContainers(cli *client.Client) {
 		panic(err)
 	}
 
-	fmt.Print("{\"containers\":")
+	fmt.Print("{ \"containers\": ")
 	dump(containers)
 	fmt.Println("}")
 }
@@ -73,5 +84,5 @@ func displayInfo(cli *client.Client) {
 }
 
 func usage() {
-	fmt.Println("usage: docker-client [-host path] [-ps] [-info]")
+	fmt.Println("usage: docker-client [-host path] [-compact] [-ps] [-info]")
 }
