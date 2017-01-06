@@ -100,6 +100,15 @@
     <Content Include="Resources\main.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>cd "$(SolutionDir)\..\..\go\docker-client
+go build
+</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>(robocopy "$(SolutionDir)..\..\go\docker-client" "$(TargetDir)Resources" *.exe)  ^&amp; IF %25ERRORLEVEL%25 GEQ 2 exit %25ERRORLEVEL%25
+(robocopy "$(ProjectDir)Resources" "$(TargetDir)Resources" *.*)  ^&amp; IF %25ERRORLEVEL%25 LEQ 1 exit 0</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
