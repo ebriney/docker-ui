@@ -6,6 +6,8 @@
 # Folders
 _obj
 _test
+Debug
+.vs
 
 # Architecture specific extensions/prefixes
 *.[568vq]
@@ -24,3 +26,4 @@ _testmain.go
 *.prof
 *.DS_Store
 *.xcuserdata*
+*.suo
