@@ -1,8 +1,8 @@
 function dockerClientRequest(command) {
     try {
-        window.external.docker.postMessage(command);
+        window.external.docker(command);
     } catch (err) {
-        console.log('error');
+        alert('error');
     }
 }
 

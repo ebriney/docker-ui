@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,6 +13,8 @@ namespace webviewtestWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        static string ResourcePath = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Resources");
+
         [ComVisible(true)]
         public class ScriptManager
         {
@@ -34,7 +39,96 @@ namespace webviewtestWPF
 
             public string DockerClient(string command)
             {
-                return "";
+                var exePath = Path.Combine(MainWindow.ResourcePath, "docker-client.exe");
+                var pei = Run(exePath, $"-compact -{command}", 0);
+                return pei.StandardOutput.Replace('\n', '\0');
+            }
+
+            public class ProcessExecutionInfo
+            {
+                public int ExitCode;
+                public string StandardOutput;
+                public string ErrorOutput;
+                public string CombinedOutput;
+                public bool TimedOut;
+            }
+            public ProcessExecutionInfo Run(string filename, string arguments, int timeout)
+            {
+                var process = CreateProcess(filename, arguments);
+                return StartProcessAndCaptureOutput(timeout, process);
+            }
+            private static Process CreateProcess(string filename, string arguments)
+            {
+                return new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        FileName = filename,
+                        Arguments = arguments
+                    }
+                };
+            }
+            private static ProcessExecutionInfo StartProcessAndCaptureOutput(int timeout, Process process)
+            {
+                process.Start();
+
+                var standardOutput = "";
+                var errorOutput = "";
+                var combinedOutput = "";
+                var combinedOutputLock = new object();
+
+                process.OutputDataReceived += (sender, args) =>
+                {
+                    var line = args.Data;
+                    if (line == null) return;
+
+                    standardOutput += line + Environment.NewLine;
+                    lock (combinedOutputLock)
+                    {
+                        combinedOutput += line + Environment.NewLine;
+                    }
+                };
+
+                process.ErrorDataReceived += (sender, args) =>
+                {
+                    var line = args.Data;
+                    if (line == null) return;
+
+                    errorOutput += line + Environment.NewLine;
+                    lock (combinedOutputLock)
+                    {
+                        combinedOutput += line + Environment.NewLine;
+                    }
+                };
+
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                var timedOut = false;
+                if (timeout == 0)
+                    process.WaitForExit();
+                else if (!process.WaitForExit(timeout)) // process timed out
+                {
+                    try { process.Kill(); }
+                    catch
+                    {
+                        // ignored
+                    }
+                    timedOut = true;
+                }
+
+                return new ProcessExecutionInfo
+                {
+                    ExitCode = process.ExitCode,
+                    StandardOutput = standardOutput,
+                    ErrorOutput = errorOutput,
+                    CombinedOutput = combinedOutput,
+                    TimedOut = timedOut
+                };
             }
         }
 
@@ -45,13 +139,15 @@ namespace webviewtestWPF
             // Uncomment the following line when you are finished debugging.
             //webBrowser1.ScriptErrorsSuppressed = true;
 
-            WebView.NavigateToString(
-                "<html><head><script>" +
-                "function test(message) { alert(message); }" +
-                "</script></head><body><button " +
-                "onclick=\"window.external.Test('called from script code')\">" +
-                "call client code from script code</button>" +
-                "</body></html>");
+            //WebView.NavigateToString(
+            //    "<html><head><script>" +
+            //    "function test(message) { alert(message); }" +
+            //    "</script></head><body><button " +
+            //    "onclick=\"window.external.Test('called from script code')\">" +
+            //    "call client code from script code</button>" +
+            //    "</body></html>");
+
+            WebView.Navigate(Path.Combine(ResourcePath, "index.html"));
         }
     }
 }
