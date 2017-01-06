@@ -20,7 +20,7 @@ class ViewController: NSViewController, WKScriptMessageHandler {
         let contentController = WKUserContentController();
         let userScript = WKUserScript(source: "redHeader()", injectionTime: WKUserScriptInjectionTime.atDocumentEnd, forMainFrameOnly: true)
         contentController.addUserScript(userScript)
-        contentController.add(self, name: "info")
+        contentController.add(self, name: "docker")
         
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
@@ -38,13 +38,16 @@ class ViewController: NSViewController, WKScriptMessageHandler {
 
     // WKScriptMessageHandler protocol
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if(message.name == "info") {
-            let info = getDockerInfo().replacingOccurrences(of: "\n", with: "")
-            let js = "dockerInfoChanged( JSON.parse(\'\(info)\') );"
+        if(message.name == "docker") {
+            let command = message.body as! String
+            let output = dockerClient(command)
+            let firstWord = command.components(separatedBy: " ").first!
+            let js = "docker_\(firstWord)( JSON.parse(\'\(output)\') );"
             self.webView.evaluateJavaScript(js) { (_, error) in
-                print(error ?? "Info updated successfully")
+                print(error ?? "docker-client \(command) succeeded")
             }
-        } }
+        }
+    }
 
     // Execute a shell command and return (error?, stdout)
     func Execute(_ command: String) -> (String?, String) {
@@ -64,12 +67,12 @@ class ViewController: NSViewController, WKScriptMessageHandler {
         return (String(data: standardError.fileHandleForReading.availableData, encoding: String.Encoding.utf8) ?? "" , output)
     }
     
-    func getDockerInfo() -> String {
-        let (error, output) = Execute(clientExecutable + " -info -compact")
+    func dockerClient(_ command: String) -> String {
+        let (error, output) = Execute("\(clientExecutable) -compact -\(command)")
         if let error = error {
             return error
         }
-        return output
+        return output.replacingOccurrences(of: "\n", with: "")
     }
 
 }
