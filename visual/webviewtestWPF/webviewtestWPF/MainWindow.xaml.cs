@@ -33,15 +33,14 @@ namespace webviewtestWPF
             {
                 var output = DockerClient(command);
                 var firstWord = command.Split(' ')[0];
-                var js = $"docker_{firstWord}( JSON.parse(\'{output}\') );";
-                _webview.InvokeScript(js);
+                _webview.InvokeScript($"docker_{firstWord}", output);
             }
 
             public string DockerClient(string command)
             {
                 var exePath = Path.Combine(MainWindow.ResourcePath, "docker-client.exe");
                 var pei = Run(exePath, $"-compact -{command}", 0);
-                return pei.StandardOutput.Replace('\n', '\0');
+                return pei.StandardOutput.Replace("\r\n", "");
             }
 
             public class ProcessExecutionInfo
@@ -146,8 +145,8 @@ namespace webviewtestWPF
             //    "onclick=\"window.external.Test('called from script code')\">" +
             //    "call client code from script code</button>" +
             //    "</body></html>");
-
-            WebView.Navigate(Path.Combine(ResourcePath, "index.html"));
+            var indexPath = Path.Combine(ResourcePath, "index.html");
+            WebView.Navigate(indexPath);
         }
     }
 }
