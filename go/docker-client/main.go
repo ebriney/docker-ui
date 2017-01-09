@@ -34,6 +34,16 @@ func main() {
 		panic(err)
 	}
 
+	versionInfo, err2 := cli.ServerVersion(context.Background())
+	if err2 != nil {
+		panic(err2)
+	}
+
+	cli, err = client.NewClient(host, versionInfo.APIVersion, nil, nil)
+	if err != nil {
+		panic(err)
+	}
+
 	if version {
 		serverVersion(cli)
 		return
@@ -109,5 +119,5 @@ func serverVersion(cli *client.Client) {
 }
 
 func usage() {
-	fmt.Println("usage: docker-client [-host path] [-compact] [-serverVersion] [-ps] [-info]")
+	fmt.Println("usage: docker-client [-host path] [-compact] [-version] [-ps] [-info]")
 }
