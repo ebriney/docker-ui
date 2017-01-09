@@ -14,4 +14,8 @@ function docker_info(info) {
     document.querySelector('h1').innerHTML = 'version: ' + info.ServerVersion;
 }
 
-dockerClientRequest('info');
+function docker_version(info) {
+    document.querySelector('h1').innerHTML = 'version: ' + info.Version;
+}
+
+dockerClientRequest('version');

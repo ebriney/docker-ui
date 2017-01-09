@@ -13,9 +13,9 @@
 		BA6BC7531E1BB51200A095DA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BA6BC7511E1BB51200A095DA /* Main.storyboard */; };
 		BA6BC75E1E1BB51200A095DA /* webviewtestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6BC75D1E1BB51200A095DA /* webviewtestTests.swift */; };
 		BA6BC7691E1BB51200A095DA /* webviewtestUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6BC7681E1BB51200A095DA /* webviewtestUITests.swift */; };
+		BA940F291E23FB3D008A6E8F /* docker-client in Resources */ = {isa = PBXBuildFile; fileRef = BA940F281E23FB3D008A6E8F /* docker-client */; };
 		BAE3F10E1E1D3CDB003F798F /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = BAE3F10C1E1D3CDB003F798F /* index.html */; };
 		BAE3F10F1E1D3CDB003F798F /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = BAE3F10D1E1D3CDB003F798F /* main.js */; };
-		BAE3F1111E1D42F3003F798F /* docker-client in Resources */ = {isa = PBXBuildFile; fileRef = BAE3F1101E1D42F3003F798F /* docker-client */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,9 +48,9 @@
 		BA6BC7641E1BB51200A095DA /* webviewtestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = webviewtestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA6BC7681E1BB51200A095DA /* webviewtestUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = webviewtestUITests.swift; sourceTree = "<group>"; };
 		BA6BC76A1E1BB51200A095DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BA940F281E23FB3D008A6E8F /* docker-client */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = "docker-client"; path = "../../../go/docker-client/docker-client"; sourceTree = "<group>"; };
 		BAE3F10C1E1D3CDB003F798F /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = index.html; path = resources/index.html; sourceTree = "<group>"; };
 		BAE3F10D1E1D3CDB003F798F /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = main.js; path = resources/main.js; sourceTree = "<group>"; };
-		BAE3F1101E1D42F3003F798F /* docker-client */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "docker-client"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,7 +132,7 @@
 		BAE3F10B1E1D3CCE003F798F /* resources */ = {
 			isa = PBXGroup;
 			children = (
-				BAE3F1101E1D42F3003F798F /* docker-client */,
+				BA940F281E23FB3D008A6E8F /* docker-client */,
 				BAE3F10C1E1D3CDB003F798F /* index.html */,
 				BAE3F10D1E1D3CDB003F798F /* main.js */,
 			);
@@ -249,7 +249,7 @@
 				BAE3F10E1E1D3CDB003F798F /* index.html in Resources */,
 				BA6BC7501E1BB51200A095DA /* Assets.xcassets in Resources */,
 				BA6BC7531E1BB51200A095DA /* Main.storyboard in Resources */,
-				BAE3F1111E1D42F3003F798F /* docker-client in Resources */,
+				BA940F291E23FB3D008A6E8F /* docker-client in Resources */,
 				BAE3F10F1E1D3CDB003F798F /* main.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

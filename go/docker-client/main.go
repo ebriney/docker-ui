@@ -15,13 +15,15 @@ var (
 	compact bool
 	ps      bool
 	info    bool
+	version bool
 )
 
 func init() {
 	flag.StringVar(&host, "host", client.DefaultDockerHost, "host to reach")
 	flag.BoolVar(&compact, "compact", false, "dump compact json")
 	flag.BoolVar(&ps, "ps", false, "list containers (ps -a)")
-	flag.BoolVar(&info, "info", false, "docker info")
+	flag.BoolVar(&info, "info", false, "server info")
+	flag.BoolVar(&version, "version", false, "server version")
 }
 
 func main() {
@@ -30,6 +32,11 @@ func main() {
 	cli, err := client.NewClient(host, "", nil, nil)
 	if err != nil {
 		panic(err)
+	}
+
+	if version {
+		serverVersion(cli)
+		return
 	}
 
 	if ps {
@@ -89,6 +96,18 @@ func displayInfo(cli *client.Client) {
 	}
 }
 
+func serverVersion(cli *client.Client) {
+	version, err := cli.ServerVersion(context.Background())
+	if err != nil {
+		panic(err)
+	}
+
+	dump(version)
+	if !compact {
+		fmt.Println("")
+	}
+}
+
 func usage() {
-	fmt.Println("usage: docker-client [-host path] [-compact] [-ps] [-info]")
+	fmt.Println("usage: docker-client [-host path] [-compact] [-serverVersion] [-ps] [-info]")
 }
