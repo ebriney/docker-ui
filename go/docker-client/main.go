@@ -39,10 +39,7 @@ func main() {
 		panic(err2)
 	}
 
-	cli, err = client.NewClient(host, versionInfo.APIVersion, nil, nil)
-	if err != nil {
-		panic(err)
-	}
+	cli.UpdateClientVersion(versionInfo.APIVersion)
 
 	if version {
 		serverVersion(cli)
